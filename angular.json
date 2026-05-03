@@ -19,9 +19,14 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular/build:browser",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "outputPath": "dist/stock-management-frontend",
+            "index": "src/index.html",
             "main": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -32,7 +37,8 @@
             ],
             "styles": [
               "src/styles.scss"
-            ]
+            ],
+            "scripts": []
           },
           "configurations": {
             "production": {
