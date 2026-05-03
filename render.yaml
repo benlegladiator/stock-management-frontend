@@ -1,14 +1,9 @@
 services:
-  # Configuration du service Web pour le frontend Angular
-  - type: web
+  # Configuration du Static Site pour le frontend Angular
+  - type: static
     name: stock-management-frontend
-    env: static
     buildCommand: npm run build
     staticPublishPath: dist/stock-management-frontend
-    routes:
-      - type: rewrite
-        source: /api/*
-        destination: https://stock-management-backend-6gw8.onrender.com/api/*
     envVars:
       - key: NODE_VERSION
         value: 20
