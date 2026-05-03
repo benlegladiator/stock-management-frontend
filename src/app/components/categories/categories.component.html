@@ -1,0 +1,90 @@
+<div class="categories-container">
+  <h1>🏷️ Gestion des Catégories</h1>
+  
+  <div *ngIf="loading" class="loading">
+    Chargement des catégories...
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!loading" class="categories-content">
+    <!-- Bouton d'ajout -->
+    <button class="btn btn-primary add-btn" (click)="showAddForm = true">
+      ➕ Ajouter une nouvelle catégorie
+    </button>
+
+    <!-- Formulaire d'ajout -->
+    <div *ngIf="showAddForm" class="form-container">
+      <h3>Ajouter une nouvelle catégorie</h3>
+      <form (ngSubmit)="addCategorie()">
+        <div class="form-group">
+          <label for="nom">Nom de la catégorie *</label>
+          <input type="text" id="nom" [(ngModel)]="newCategorie.nom" name="nom" required placeholder="Ex: Électronique">
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-success">Ajouter</button>
+          <button type="button" class="btn btn-secondary" (click)="showAddForm = false; resetForm()">Annuler</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Liste des catégories -->
+    <div class="categories-list">
+      <h2>Liste des catégories ({{ categories.length }})</h2>
+      
+      <div class="categories-grid">
+        <div *ngFor="let categorie of categories" class="categorie-card">
+          <div class="categorie-header">
+            <h3>{{ categorie.nom }}</h3>
+            <div class="categorie-actions">
+              <button class="btn-edit" (click)="editCategorie(categorie)" title="Modifier">
+                ✏️
+              </button>
+              <button class="btn-delete" (click)="deleteCategorie(categorie.id)" title="Supprimer">
+                🗑️
+              </button>
+            </div>
+          </div>
+          
+          <div class="categorie-stats">
+            <div class="stat-item">
+              <span class="stat-number">{{ getProduitsCount(categorie) }}</span>
+              <span class="stat-label">produits</span>
+            </div>
+          </div>
+          
+          <div *ngIf="categorie.produits && categorie.produits.length > 0" class="produits-preview">
+            <h4>Produits récents :</h4>
+            <div class="produits-list">
+              <span *ngFor="let produit of categorie.produits.slice(0, 3)" class="produit-item">
+                {{ produit.nom }}
+              </span>
+              <span *ngIf="categorie.produits.length > 3" class="produit-more">
+                +{{ categorie.produits.length - 3 }} autres
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire de modification -->
+    <div *ngIf="showEditForm" class="form-container edit-form">
+      <h3>Modifier la catégorie</h3>
+      <form (ngSubmit)="updateCategorie()">
+        <div class="form-group">
+          <label for="editNom">Nom de la catégorie *</label>
+          <input type="text" id="editNom" [(ngModel)]="selectedCategorie.nom" name="editNom" required>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-success">Mettre à jour</button>
+          <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

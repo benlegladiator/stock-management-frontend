@@ -1,0 +1,66 @@
+<div class="dashboard-container">
+  <h1>Tableau de Bord - Gestion de Stock</h1>
+  
+  <div *ngIf="loading" class="loading">
+    Chargement des données...
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    ⚠️ {{ errorMessage }}
+    <button (click)="loadDashboardData()" class="retry-button">Réessayer</button>
+  </div>
+
+  <div *ngIf="!loading" class="dashboard-content">
+    <!-- Statistiques principales -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total Produits</h3>
+        <div class="stat-number">{{ stats.totalProduits }}</div>
+      </div>
+      
+      <div class="stat-card">
+        <h3>Total Catégories</h3>
+        <div class="stat-number">{{ stats.totalCategories }}</div>
+      </div>
+      
+      <div class="stat-card">
+        <h3>Total Mouvements</h3>
+        <div class="stat-number">{{ stats.totalMouvements }}</div>
+      </div>
+      
+      <div class="stat-card warning">
+        <h3>Stock Faible</h3>
+        <div class="stat-number">{{ stats.lowStockCount }}</div>
+      </div>
+    </div>
+
+    <!-- Mouvements récents -->
+    <div class="movements-section">
+      <h2>Mouvements de Stock (30 derniers jours)</h2>
+      <div class="movements-grid">
+        <div class="movement-card">
+          <h3>Entrées</h3>
+          <div class="movement-number entrées">{{ stats.entrees30jours }}</div>
+        </div>
+        
+        <div class="movement-card">
+          <h3>Sorties</h3>
+          <div class="movement-number sorties">{{ stats.sorties30jours }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alertes de stock faible -->
+    <div class="alerts-section" *ngIf="lowStockProducts.length > 0">
+      <h2>⚠️ Alertes de Stock Faible</h2>
+      <div class="products-grid">
+        <div class="product-card" *ngFor="let product of lowStockProducts">
+          <h4>{{ product.nom }}</h4>
+          <p class="brand">{{ product.marque }}</p>
+          <p class="price">{{ product.prix | currency:'EUR' }}</p>
+          <p class="stock low">Stock: {{ product.quantite }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

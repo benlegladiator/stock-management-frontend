@@ -1,0 +1,135 @@
+<div class="mouvements-container">
+  <h1>📈 Gestion des Mouvements de Stock</h1>
+  
+  <div *ngIf="loading" class="loading">
+    Chargement des mouvements...
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    ⚠️ {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!loading" class="mouvements-content">
+    <!-- Bouton d'ajout -->
+    <button class="btn btn-primary add-btn" (click)="showAddForm = true">
+      ➕ Enregistrer un mouvement
+    </button>
+
+    <!-- Formulaire d'ajout -->
+    <div *ngIf="showAddForm" class="form-container">
+      <h3>Enregistrer un mouvement de stock</h3>
+      <form (ngSubmit)="addMouvement()">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="produitId">Produit *</label>
+            <select id="produitId" [(ngModel)]="newMouvement.produitId" name="produitId" required>
+              <option [ngValue]="null">Sélectionner un produit</option>
+              <option *ngFor="let produit of produits" [ngValue]="produit.id">
+                {{ produit.nom }} (Stock: {{ produit.quantite }})
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="typeMouvement">Type de mouvement *</label>
+            <select id="typeMouvement" [(ngModel)]="newMouvement.typeMouvement" name="typeMouvement" required>
+              <option value="ENTREE">📦 Entrée de stock</option>
+              <option value="SORTIE">📤 Sortie de stock</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="quantite">Quantité *</label>
+            <input type="number" id="quantite" [(ngModel)]="newMouvement.quantite" name="quantite" min="1" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="description">Description</label>
+            <input type="text" id="description" [(ngModel)]="newMouvement.description" name="description" placeholder="Ex: Livraison fournisseur, Vente client...">
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-success">Enregistrer</button>
+          <button type="button" class="btn btn-secondary" (click)="showAddForm = false; resetForm()">Annuler</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters-section">
+      <h3>Filtres</h3>
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label for="filterType">Type</label>
+          <select id="filterType" [(ngModel)]="filterType">
+            <option value="">Tous les types</option>
+            <option value="ENTREE">Entrées uniquement</option>
+            <option value="SORTIE">Sorties uniquement</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="filterProduit">Produit</label>
+          <select id="filterProduit" [(ngModel)]="filterProduit">
+            <option [ngValue]="null">Tous les produits</option>
+            <option *ngFor="let produit of produits" [ngValue]="produit.id">
+              {{ produit.nom }}
+            </option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label for="dateDebut">Date début</label>
+          <input type="date" id="dateDebut" [(ngModel)]="dateDebut">
+        </div>
+        
+        <div class="filter-group">
+          <label for="dateFin">Date fin</label>
+          <input type="date" id="dateFin" [(ngModel)]="dateFin">
+        </div>
+      </div>
+      
+      <div class="filter-actions">
+        <button class="btn btn-secondary" (click)="clearFilters()">🔄 Effacer les filtres</button>
+      </div>
+    </div>
+
+    <!-- Liste des mouvements -->
+    <div class="mouvements-list">
+      <h2>Historique des mouvements ({{ getFilteredMouvements().length }})</h2>
+      
+      <div class="mouvements-table">
+        <div class="table-header">
+          <div>Date</div>
+          <div>Type</div>
+          <div>Produit</div>
+          <div>Quantité</div>
+          <div>Description</div>
+          <div>Actions</div>
+        </div>
+        
+        <div *ngFor="let mouvement of getFilteredMouvements()" class="table-row">
+          <div class="date-cell">{{ formatDate(mouvement.dateMouvement) }}</div>
+          <div class="type-cell">
+            <span class="type-badge" [style.color]="getMouvementTypeColor(mouvement.typeMouvement)">
+              {{ getMouvementTypeLabel(mouvement.typeMouvement) }}
+            </span>
+          </div>
+          <div class="produit-cell">{{ getProduitName(mouvement.produitId) }}</div>
+          <div class="quantite-cell">{{ mouvement.quantite }}</div>
+          <div class="description-cell">{{ mouvement.description || '-' }}</div>
+          <div class="actions-cell">
+            <button class="btn-delete" (click)="deleteMouvement(mouvement.id)" title="Supprimer">
+              🗑️
+            </button>
+          </div>
+        </div>
+        
+        <div *ngIf="getFilteredMouvements().length === 0" class="no-data">
+          Aucun mouvement trouvé pour les filtres sélectionnés
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
