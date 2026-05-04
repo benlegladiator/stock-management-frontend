@@ -19,7 +19,8 @@ RUN npm run build
 FROM nginx:alpine
 
 # Copy built app to nginx
-COPY --from=build /app/dist/stock-management-frontend /usr/share/nginx/html
+COPY --from=build /app/dist/stock-management-frontend /usr/share/nginx/html/
+COPY --from=build /app/dist/stock-management-frontend/* /usr/share/nginx/html/
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
